@@ -1,0 +1,42 @@
+# debian-ios/pins/bookworm-arm64.pins
+#
+# Version lock for everything the initramfs is built from. fetch-inputs.sh refuses
+# to build if the archive no longer offers one of these versions (PIN DRIFT), so a
+# rebuild either reproduces the documented artefact or fails loudly.
+#
+# The SHA-256 of every .deb is taken from the Debian archive's own index stanza at
+# fetch time and verified before the file is used -- the version pin and the hash
+# check are independent, and both must pass.
+#
+# format: <package> <version>
+#
+# ---- the userland that is actually requested -------------------------------------
+busybox-static 1:1.35.0-4+deb12u1+b1
+dash 0.5.12-2
+coreutils 9.1-1
+dpkg 1.21.23
+sed 4.9-1+deb12u1
+grep 3.8-5
+tar 1.34+dfsg-1.2+deb12u1
+gzip 1.12-1
+# ---- pulled in by dependency resolution (sha256-verified like the rest) ----------
+debianutils 5.7-0.5~deb12u1
+libc6 2.36-9+deb12u14
+libgcc-s1 12.2.0-14+deb12u1
+gcc-12-base 12.2.0-14+deb12u1
+libacl1 2.3.1-3
+libattr1 1:2.5.1-4
+libselinux1 3.4-1+b6
+libpcre2-8-0 10.42-1
+libbz2-1.0 1.0.8-5+b1
+liblzma5 5.4.1-1+deb12u1
+libzstd1 1.5.4+dfsg2-5
+libmd0 1.0.4-2
+zlib1g 1:1.2.13.dfsg-1
+libgmp10 2:6.2.1+dfsg1-1.1
+# ---- STAND-IN QEMU kernel: NOT our A9 kernel and not part of the initramfs -------
+# Used only to boot the initramfs on a virtual arm64 machine. It is a 4K-page
+# Debian kernel; the A9 kernel must be built 16K (config_16k) and is built by
+# kernel-engineer (task-6), not here. See debian-ios/README.md "what the smoke
+# test does and does not prove".
+linux-image-6.1.0-50-arm64 6.1.176-1

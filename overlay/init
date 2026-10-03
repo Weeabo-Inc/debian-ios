@@ -1,0 +1,71 @@
+#!/bin/busybox sh
+# /init -- arlo RAM-backed initramfs, first userspace process (PID 1).
+#
+# DESIGN RULES, and the reasons:
+#  1. The interpreter is /bin/busybox, STATIC. If the dynamic glibc userland is
+#     broken for any reason, the kernel can still reach /init and we still get a
+#     shell. Never make the boot path depend on the dynamic linker.
+#  2. Never hardcode a tty name. On A9/n69ap upstream we do not yet know whether
+#     the console is ttyAMA0, ttyS0 or fbcon; /dev/console is the one name that
+#     holds for all of them.
+#  3. No storage, no network, no assumption of a clock. Anything that would block
+#     on a device we have no driver for is deliberately absent.
+#  4. `arlo.smoke=1` on the kernel command line turns the boot into a self-test
+#     that powers the machine off when it finishes -- that is what the QEMU
+#     evidence log is produced by, with no input timing to get wrong.
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+BB=/bin/busybox
+
+log() { echo "$*"; }
+
+# ------------------------------------------------------------- mounts ----
+mount -t proc     proc     /proc 2>/dev/null || true
+mount -t sysfs    sysfs    /sys  2>/dev/null || true
+mount -t devtmpfs devtmpfs /dev  2>/dev/null || true
+
+if [ ! -e /dev/console ]; then
+  # devtmpfs may be unavailable (CONFIG_DEVTMPFS off). Make the console by hand:
+  # it is character device 5:1, and without it nothing can be printed.
+  mkdir -p /dev
+  mknod -m 600 /dev/console c 5 1 2>/dev/null || true
+  mknod -m 666 /dev/null    c 1 3 2>/dev/null || true
+fi
+
+mount -t tmpfs -o mode=0755 tmpfs /tmp 2>/dev/null || true
+mount -t tmpfs -o mode=0755 tmpfs /run 2>/dev/null || true
+
+[ -x /bin/hostname ] && /bin/hostname arlo 2>/dev/null || true
+
+CMDLINE=$(cat /proc/cmdline 2>/dev/null || echo "")
+
+case "$CMDLINE" in
+  *arlo.smoke=1*)
+    log ""
+    log "arlo: smoke mode (arlo.smoke=1) -- self-test then power off"
+    if [ -x /usr/lib/arlo/smoke.sh ]; then
+      /usr/lib/arlo/smoke.sh
+      RC=$?
+    else
+      log "arlo: FAIL -- /usr/lib/arlo/smoke.sh is missing from the initramfs"
+      RC=127
+    fi
+    log ""
+    log "arlo: smoke mode finished, rc=$RC -- powering off"
+    sync
+    $BB poweroff -f 2>/dev/null || $BB reboot -f 2>/dev/null || true
+    # If poweroff is unavailable, stop cleanly rather than spinning.
+    while true; do $BB sleep 3600; done
+    ;;
+esac
+
+# -------------------------------------------------------- interactive ----
+# busybox init (via /etc/inittab) reaps orphans and respawns the shell if it
+# exits; a bare shell as PID 1 does neither. Prefer init, keep the shell as the
+# fallback so a broken inittab cannot cost us the console.
+if [ -s /etc/inittab ] && $BB --list 2>/dev/null | grep -qx init; then
+  exec $BB init
+fi
+
+log "arlo: no usable /etc/inittab -- falling back to a direct console shell"
+exec $BB cttyhack /bin/sh -l

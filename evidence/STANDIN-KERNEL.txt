@@ -1,0 +1,8 @@
+STAND-IN KERNEL -- NOT the arlo A9 kernel, NOT a 16K-page kernel.
+package   : linux-image-6.1.0-50-arm64 6.1.176-1
+deb sha256: 914f75b57a8e165d85fb910c3e2dcc7000a05a9fea3f42f90b26e8dd590d5f06
+file      : /root/arlo/kernel-standin/boot/vmlinuz-6.1.0-50-arm64
+size      : 32956352
+sha256    : 84b9c190bb4589c4a9527e3191fec051f9f115e88f0a3e8afae96ba0dfb4dfef
+purpose   : boot the initramfs on QEMU's arm64 'virt' machine to prove the
+            userland reaches a shell. It says nothing about the A9.

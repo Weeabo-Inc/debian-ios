@@ -1,0 +1,23 @@
+# debian-ios artefact + evidence hashes (sha256) -- generated after the final build.
+# verify from this directory:  sha256sum -c SHA256SUMS
+
+c8b2dbb4a10c6510fab492c9b2eebc452fa4b2c5270f30b69710cad7c4ec2608  dist/arlo-initramfs-min.cpio.gz
+51911627ac6d15ae7f36c580eec4427629853016b4690f7d8ce9eb54acdd6fa2  dist/arlo-initramfs-min.cpio
+9eb1964db74b50d66bc0ab296238dbc76b743752a2fbef51e955d89c6365239f  dist/arlo-initramfs-dash.cpio.gz
+ec9bbb120af701e0b8bfecb0c80f8c149ebeb38f33319ad139b051e11a760a18  dist/arlo-initramfs-dash.cpio
+0dae863c10bddd615a5a026ecb8bbc9768296a216b895e3f47e226cd6eb0c9dd  dist/arlo-initramfs-debian.cpio.gz
+800e48f88ee76a8fde53b4d73a6b04b8937c700d9d5d5ec05f9e91272a51758c  dist/arlo-initramfs-debian.cpio
+c60ac3d89c446454201ef6b70dbd1c11b8fb7b530bae1275485f025ab253500c  evidence/qemu-console-smoke-min.log
+95759a5a4940479e6e4d0a5fbce2782d3291ff1934cd5d2f0db42384e15cd5ed  evidence/qemu-console-interactive-min.log
+7e1c392dbf372331e1c9603fc58fe64e3299f649ff4afe687175efd4cb58a85a  evidence/qemu-console-smoke-min-16k.log
+99b5bf4aff2a1f5123fc569b64a88722649ea892f736164e4b1d771016afa2d2  evidence/qemu-console-interactive-min-16k.log
+712feff58c27b3a280003d238004d29d3983442ee54a029264b92c940fd9dbc5  evidence/qemu-console-smoke-dash.log
+e6704466a2093416e0cf40418aeb0a9403652f6c7bc16d9854d23dfddedf2ef6  evidence/qemu-console-interactive-dash.log
+3c952543d243889746f66bc7fc9f68dba656112d3f7d2363685ea045e7012545  evidence/qemu-console-smoke-dash-16k.log
+8092091017098e698d2f9cb0edfba78a6ec8dfdb931399f63dc12b1b26a89e73  evidence/qemu-console-interactive-dash-16k.log
+13d2de3f9eeddb72274737d28567ffc322828bf30989bce7ec32976b6db30338  evidence/qemu-console-smoke-debian.log
+47168f958d6f1ea09424c5b896f734134d1758a23b2d57519492745201ba4f29  evidence/qemu-console-interactive-debian.log
+e680490b7a41feb3367dcb701a541f367c8bfa772b7953b1bd4aa134b2704091  evidence/qemu-console-smoke-debian-16k.log
+17f456465361aa18770489d9088f64dafe68fb722266b386343e83f0d7383efa  evidence/qemu-console-interactive-debian-16k.log
+5c75af5baf214e555894bcc13dd619a4feaac7da7a98020b8f0a3d37f2eb3d7b  dist/standin-kernels/Image-16k-6.1.176
+84b9c190bb4589c4a9527e3191fec051f9f115e88f0a3e8afae96ba0dfb4dfef  dist/standin-kernels/vmlinuz-6.1.0-50-arm64

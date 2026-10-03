@@ -1,0 +1,13 @@
+
+arlo -- RAM-backed Debian arm64 initramfs (iPhone SE 1st gen / A9 s8003 / n69ap)
+
+What works here:  a shell, coreutils, dpkg, busybox -- all from RAM.
+What does not:    storage, USB host, Wi-Fi, network, PMIC (power/battery/RTC),
+                  GPU, and the camera. None of those drivers exist upstream
+                  for A9. There is no disk to install to and no way to save
+                  anything. Rebooting loses everything, by design.
+
+If you can read this on the phone's screen, the framebuffer console is up --
+that is a much bigger result than the shell itself.
+
+Full statement: /etc/arlo/CAPABILITY.txt

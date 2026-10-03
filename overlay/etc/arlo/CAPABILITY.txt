@@ -1,0 +1,42 @@
+arlo initramfs -- honest capability statement
+=============================================
+
+SCOPE. This is a RAM-backed arm64 initramfs. It is what the kernel reaches after
+the loader hands off. It is not an installed system and it is not a computer yet.
+
+WHAT THIS USERLAND CAN DO (all of it with no drivers beyond early console):
+  - run a shell on /dev/console, whether that console is a serial UART or fbcon;
+  - run the utilities in this image: busybox applets, and in the "debian"
+    variant also genuine Debian glibc binaries (dash, coreutils, sed, grep,
+    tar, gzip, dpkg) unpacked from the Debian archive;
+  - mount and use RAM filesystems (tmpfs, devtmpfs, proc, sysfs);
+  - report what the kernel and the device tree actually are (arlo inventory);
+  - prove the page size, the memory size and the console set as the kernel
+    sees them.
+
+WHAT IT CANNOT DO, AND WHY -- not configuration, missing drivers:
+  - STORAGE. Upstream A9 has no NAND/NVMe/MMC driver. There is no disk, no
+    partition to mount, no place to install Debian to. Everything lives in DRAM
+    and dies with the power. This is why the userland is an initramfs at all.
+  - USB HOST. There is no upstream A9 USB host controller driver, so no
+    keyboard, no stick, no gadget networking.
+  - Wi-Fi / NETWORK. No A9 Wi-Fi driver upstream. `lo` is the only interface.
+    No apt, no ssh, no DNS.
+  - PMIC. No A9 PMIC driver upstream: no battery reporting, no charger control,
+    no RTC, no regulators beyond whatever the loader left running. The clock
+    reads 1970-01-01 and that is expected, not a fault.
+  - GPU, display pipeline, camera. No driver. If a picture appears it is because
+    the loader left a linear framebuffer and the kernel bound
+    simple-framebuffer + fbcon to it -- one static image, no acceleration.
+  - KVM / virtualisation: A9 has no EL2. Not possible, ever.
+
+WHAT "IT BOOTS" DOES AND DOES NOT MEAN
+  A successful console means: the kernel started, the initramfs unpacked, PID 1
+  ran from RAM, and a shell responded. That is the first real milestone on this
+  project and it is worth having.
+  It does NOT mean the device is usable, that anything persists, that you can
+  install packages, or that networking will ever appear from this layer.
+
+The size budget and the DRAM assumptions behind it are in debian-ios/README.md.
+Built from a pinned, SHA-256-verified Debian archive input set; see
+/etc/arlo/manifest.tsv inside this image and debian-ios/dist/SHA256SUMS.

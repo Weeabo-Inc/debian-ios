@@ -1,0 +1,24 @@
+#!/bin/sh
+# /etc/init.d/rcS -- sysinit. Runs once, before the console shell starts.
+# Keep it short and non-blocking: nothing here may wait on hardware we do not
+# have a driver for, or the console never appears.
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+echo ""
+echo "arlo initramfs -- RAM-backed Debian arm64 userland"
+echo "(this is a console, not a computer: read /etc/arlo/CAPABILITY.txt)"
+echo ""
+/usr/lib/arlo/inventory.sh
+echo ""
+
+# A clock is optional. There is no RTC driver upstream on A9 (the RTC lives in
+# the PMIC, and there is no PMIC driver), so on the phone the kernel starts at
+# epoch 0. Setting a fixed date here would be a lie about elapsed time; leaving it
+# means timestamps are wrong but monotonic. Say which machine this is instead of
+# pretending it is always 1970.
+echo "clock: $(date -u 2>/dev/null)"
+echo "       (on A9 expect 1970-01-01: no RTC driver upstream -- the RTC is in the"
+echo "        PMIC and there is no PMIC driver. A real date here means this is a"
+echo "        virtual machine with an RTC, i.e. not the phone.)"
+echo ""

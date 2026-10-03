@@ -1,0 +1,19 @@
+# /etc/profile -- arlo initramfs. Keep it honest and short.
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export TERM=${TERM:-vt100}
+
+# HAND-OVER TO THE REAL DEBIAN SHELL.
+# /bin/sh is a static busybox on purpose: if the dynamic glibc userland is broken,
+# the console must still come up (see /etc/arlo/CAPABILITY.txt). But busybox ash is
+# built with standalone-applet support, so inside it `ls` means the busybox applet
+# and the Debian binaries in /bin are shadowed. So: once we are safely at a prompt,
+# hand the console to Debian's dash -- but only after *proving* dash runs, and only
+# once (the environment guard is what stops an exec loop, because dash -l re-reads
+# this file). If dash cannot run, the busybox shell simply stays.
+if [ -x /bin/dash ] && [ -z "${ARLO_DEBIAN_SHELL:-}" ] && /bin/dash -c ':' 2>/dev/null; then
+  export ARLO_DEBIAN_SHELL=1
+  exec /bin/dash -l
+fi
+
+PS1='arlo:\w# '
+[ -f /etc/motd ] && cat /etc/motd
